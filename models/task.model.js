@@ -20,7 +20,7 @@ const taskSchema = new mongoose.Schema({
         required: true,
     },
     dayCreated: { type: String },
-
+    dueDate: { type: Date },
 }
     , {
         timestamps: true,
