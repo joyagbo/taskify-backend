@@ -19,9 +19,19 @@ const taskSchema = new mongoose.Schema({
         ref: "User",
         required: true,
     },
+    dayCreated: { type: String },
+
 }
     , {
         timestamps: true,
     });
+
+//Automatically set dayCreated before saving
+taskSchema.pre("save", function (next) {
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const today = new Date();
+    this.dayCreated = days[today.getDay()];
+    next();
+});
 
 module.exports = mongoose.model('Task', taskSchema);
