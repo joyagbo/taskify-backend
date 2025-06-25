@@ -12,7 +12,7 @@ exports.createTask = async (req, res) => {
             title,
             description,
             dueDate,
-            owner: req.user._id
+            owner: req.user.userId
         });
         res.status(201).json({ message: "Task created successfully.", task });
     } catch (error) {
@@ -21,11 +21,11 @@ exports.createTask = async (req, res) => {
 };
 
 //get tasks for the authenticated user
-// Supports search, completed status, pagination
+
 exports.getTasks = async (req, res) => {
-    const userId = req.user._id;
+    const userId = req.user.userId;
     // Extract query parameters
-    // search: string, completed: boolean, page: number, limit: number
+
     const { search, completed, page = 1, limit = 10 } = req.query;
     const query = { owner: userId };
     // Build the query based on search and completed parameters
@@ -56,5 +56,61 @@ exports.getTasks = async (req, res) => {
         });
     } catch (error) {
         res.status(500).json({ message: "Server error. Could not retrieve tasks." });
+    }
+}
+
+// exports.getTask = async (req, res)=>{
+//     const taskId = req.params.id;
+//     const userId = req.user.userId;
+//     try {
+
+//     } catch (error) {
+
+//     }
+// }
+
+exports.updateTask = async (req, res) => {
+    const taskId = req.params.id;
+    const userId = req.user.userId;
+
+    try {
+        //find task by id and owner
+        const task = await Task.findOne({ _id: taskId, owner: userId });
+        if (!task) {
+            return res.status(404).json({ message: "Task not found or you do not have permission to update this task." });
+        }
+
+        //update task
+        const { title, description, completed, dueDate } = req.body;
+        if (!title || !dueDate) {
+            return res.status(400).json({ message: "Title and due date are required." });
+        }
+
+        if (title !== undefined) task.title = title;
+        if (description !== undefined) task.description = description;
+        if (completed !== undefined) task.completed = completed;
+        if (dueDate !== undefined) task.dueDate = dueDate;
+
+        await task.save();
+        res.status(200).json({ message: "Task updated successfully.", task });
+    } catch (error) {
+        res.status(500).json({ message: "Server error. Could not update task.", error: error.message });
+    }
+}
+
+exports.deleteTask = async (req, res) => {
+    const taskId = req.params.id;
+    const userId = req.user.userId;
+
+    try {
+        const task = await Task.findOneAndDelete({ _id: taskId, owner: userId });
+        if (!task) {
+            return res.status(404).json({ message: "Task not found or you do not have permission to delete this task." });
+        }
+
+        res.status(200).json({ message: "Task deleted successfully." });
+
+    } catch (error) {
+        res.status(500).json({ message: "Server error. Could not delete task.", error: error.message });
     }
 }
