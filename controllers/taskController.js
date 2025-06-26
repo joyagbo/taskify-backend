@@ -1,4 +1,4 @@
-const Task = require('../models/task.model');
+const Task = require('../models/taskModel');
 
 
 // Create a new task
@@ -59,15 +59,21 @@ exports.getTasks = async (req, res) => {
     }
 }
 
-// exports.getTask = async (req, res)=>{
-//     const taskId = req.params.id;
-//     const userId = req.user.userId;
-//     try {
+exports.getTaskById = async (req, res) => {
+    const { id } = req.params;
+    const userId = req.user.userId;
 
-//     } catch (error) {
-
-//     }
-// }
+    try {
+        //find task by id and owner
+        const task = await Task.findOne({ _id: id, owner: userId });
+        if (!task) {
+            return res.status(404).json({ message: "Task not found or you do not have permission to access this task." });
+        }
+        res.status(200).json({ message: "Task retrieved successfully.", task });
+    } catch (error) {
+        res.status(500).json({ message: "Server error. Could not find task.", error: error.message });
+    }
+}
 
 exports.updateTask = async (req, res) => {
     const taskId = req.params.id;

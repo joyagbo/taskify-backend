@@ -18,6 +18,14 @@ const authMiddleware = (req, res, next) => {
     } catch (error) {
         return res.status(401).json({ message: "Token is not valid." });
     }
-}
+};
+// Middleware to check if user is admin
+const adminMiddleware = (req, res, next) => {
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Access denied. Admins only.' });
+    }
+    next();
+};
 
-module.exports = authMiddleware;
+
+module.exports = { authMiddleware, adminMiddleware };

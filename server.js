@@ -17,9 +17,11 @@ app.get("/", (req, res) => {
     res.send("Welcome to the Task Manager API!");
 });
 //auth routes
-app.use('/api/v1/auth', require('./routes/auth.routes'));
+app.use('/api/v1/auth', require('./routes/authRoutes'));
 //task routes
-app.use('/api/v1/tasks', require('./routes/task.routes'));
+app.use('/api/v1/tasks', require('./routes/taskRoutes'));
+//admin routes
+app.use('/api/v1/admin', require('./routes/adminRoutes'));
 
 
 
