@@ -1,5 +1,6 @@
 const User = require('../models/userModel');
 const Task = require('../models/taskModel');
+const authMiddleware = require('../middleware/authMiddleware');
 
 
 // Get all users
@@ -47,3 +48,34 @@ exports.deleteUser = async (req, res) => {
         res.status(500).json({ message: "Server error. Could not delete user.", error: error.message });
     }
 }
+
+
+
+
+// Update user role
+
+exports.updateUserRole = async (req, res) => {
+    const { id } = req.params;
+    const { role } = req.body;
+
+    if (!["user", "admin"].includes(role)) {
+        return res.status(400).json({ message: "Invalid role specified. Must be 'user' or 'admin'." });
+    }
+
+    try {
+        const user = await User.findByIdAndUpdate(
+            id,
+            { role },
+            { new: true, runValidators: true }
+        ).select('-password'); // Never return password
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
+        res.status(200).json({ message: `User role updated to '${role}' successfully.`, user });
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+
