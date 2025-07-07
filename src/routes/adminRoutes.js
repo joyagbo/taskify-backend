@@ -7,6 +7,7 @@ router.get('/users', authMiddleware, adminMiddleware, getAllUsers);
 router.get('/tasks', authMiddleware, adminMiddleware, getAllTasks);
 router.delete('/task/:id', authMiddleware, adminMiddleware, deleteTask);
 router.delete('/user/:id', authMiddleware, adminMiddleware, deleteUser);
+router.put('/user/:id/role', authMiddleware, adminMiddleware, updateUserRole);
 
 
 
