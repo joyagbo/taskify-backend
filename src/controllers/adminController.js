@@ -1,12 +1,10 @@
-const User = require('../models/userModel');
-const Task = require('../models/taskModel');
-const authMiddleware = require('../middleware/authMiddleware');
+const adminService = require('../services/admin.service');
 
 
 // Get all users
 exports.getAllUsers = async (req, res) => {
     try {
-        const users = await User.find().select('-password -__v');
+        const users = await adminService.getAllUsers()
         res.status(200).json({ message: "Users retrieved successfully", users });
     } catch (error) {
         res.status(500).json({ message: "Server error. Could not retrieve users.", error: error.message });
@@ -16,7 +14,7 @@ exports.getAllUsers = async (req, res) => {
 // Get all tasks
 exports.getAllTasks = async (req, res) => {
     try {
-        const tasks = await Task.find().populate('owner', 'name email').sort({ createdAt: -1 });
+        const tasks = await adminService.getAllTasks()
         res.status(200).json({ message: "Tasks retrieved successfully", tasks });
     } catch (error) {
         res.status(500).json({ message: "Server error. Could not retrieve tasks.", error: error.message });
@@ -26,7 +24,7 @@ exports.getAllTasks = async (req, res) => {
 // delete task
 exports.deleteTask = async (req, res) => {
     try {
-        const task = await Task.findByIdAndDelete(req.params.id)
+        const task = await adminService.deleteTaskById(req.params.id)
         if (!task) {
             return res.status(404).json({ message: "Task not found" })
         };
@@ -39,7 +37,7 @@ exports.deleteTask = async (req, res) => {
 // delete user
 exports.deleteUser = async (req, res) => {
     try {
-        const user = await User.findByIdAndDelete(req.params.id);
+        const user = await adminService.deleteUserById(req.params.id);
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
@@ -48,8 +46,6 @@ exports.deleteUser = async (req, res) => {
         res.status(500).json({ message: "Server error. Could not delete user.", error: error.message });
     }
 }
-
-
 
 
 // Update user role
@@ -63,11 +59,7 @@ exports.updateUserRole = async (req, res) => {
     }
 
     try {
-        const user = await User.findByIdAndUpdate(
-            id,
-            { role },
-            { new: true, runValidators: true }
-        ).select('-password'); // Never return password
+        const user = await adminService.updateUserRoleById(id, role);
 
         if (!user) {
             return res.status(404).json({ message: "User not found." });
