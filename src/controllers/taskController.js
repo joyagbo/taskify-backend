@@ -1,4 +1,4 @@
-const Task = require('../models/taskModel');
+const taskService = require('../services/task.service');
 
 
 // Create a new task
@@ -8,7 +8,7 @@ exports.createTask = async (req, res) => {
         return res.status(400).json({ message: "Title and due date are required." });
     }
     try {
-        const task = await Task.create({
+        const task = await taskService.createTask({
             title,
             description,
             dueDate,
@@ -25,47 +25,45 @@ exports.createTask = async (req, res) => {
 exports.getTasks = async (req, res) => {
     const userId = req.user.userId;
     // Extract query parameters
-
     const { search, completed, page = 1, limit = 10 } = req.query;
     const query = { owner: userId };
     // Build the query based on search and completed parameters
-    if (completed) {
+    if (completed !== undefined) {
         query.completed = completed === 'true';
     }
-
     if (search) {
         query.$or = [
             { title: new RegExp(search, 'i') },
             { description: new RegExp(search, 'i') }
-        ]
+        ];
     }
-
     try {
-        const tasks = await Task.find(query)
-            .sort({ createdAt: -1 })
-            .skip((page - 1) * limit)
-            .limit(parseInt(limit));
-
-        const total = await Task.countDocuments(query);
+        const { tasks, total } = await taskService.getTasks({
+            userId,
+            search,
+            completed,
+            page: parseInt(page),
+            limit: parseInt(limit)
+        });
         res.status(200).json({
             message: "Tasks retrieved successfully.",
             tasks,
             total,
+
             page: parseInt(page),
             totalPages: Math.ceil(total / limit)
         });
     } catch (error) {
-        res.status(500).json({ message: "Server error. Could not retrieve tasks." });
+        res.status(500).json({ message: "Server error. Could not retrieve tasks.", error: error.message });
     }
-}
+};
 
 exports.getTaskById = async (req, res) => {
     const { id } = req.params;
     const userId = req.user.userId;
-
     try {
         //find task by id and owner
-        const task = await Task.findOne({ _id: id, owner: userId });
+        const task = await taskService.getTaskById({ taskId: id, userId });
         if (!task) {
             return res.status(404).json({ message: "Task not found or you do not have permission to access this task." });
         }
@@ -73,15 +71,14 @@ exports.getTaskById = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: "Server error. Could not find task.", error: error.message });
     }
-}
+};
 
 exports.updateTask = async (req, res) => {
     const taskId = req.params.id;
     const userId = req.user.userId;
-
     try {
         //find task by id and owner
-        const task = await Task.findOne({ _id: taskId, owner: userId });
+        const task = await taskService.findTaskForUser({ taskId, userId });
         if (!task) {
             return res.status(404).json({ message: "Task not found or you do not have permission to update this task." });
         }
@@ -92,31 +89,31 @@ exports.updateTask = async (req, res) => {
             return res.status(400).json({ message: "Title and due date are required." });
         }
 
-        if (title !== undefined) task.title = title;
-        if (description !== undefined) task.description = description;
-        if (completed !== undefined) task.completed = completed;
-        if (dueDate !== undefined) task.dueDate = dueDate;
+        const updates = {};
+        if (title !== undefined) updates.title = title;
+        if (description !== undefined) updates.description = description;
+        if (completed !== undefined) updates.completed = completed;
+        if (dueDate !== undefined) updates.dueDate = dueDate;
 
-        await task.save();
-        res.status(200).json({ message: "Task updated successfully.", task });
+        const updatedTask = await taskService.updateTask({ task, updates });
+        res.status(200).json({ message: "Task updated successfully.", task: updatedTask });
     } catch (error) {
         res.status(500).json({ message: "Server error. Could not update task.", error: error.message });
     }
-}
+};
+
 
 exports.deleteTask = async (req, res) => {
     const taskId = req.params.id;
     const userId = req.user.userId;
-
     try {
-        const task = await Task.findOneAndDelete({ _id: taskId, owner: userId });
+        //find task by id and owner
+        const task = await taskService.deleteTask({ taskId, userId });
         if (!task) {
             return res.status(404).json({ message: "Task not found or you do not have permission to delete this task." });
         }
-
         res.status(200).json({ message: "Task deleted successfully." });
-
     } catch (error) {
         res.status(500).json({ message: "Server error. Could not delete task.", error: error.message });
     }
-}
+};
