@@ -1,6 +1,7 @@
 const express = require('express');
 require('dotenv').config();
-const connectDB = require('./config/db');
+//const connectDB = require('../config/db');
+const connectDB = require('./src/config/db')
 const app = express();
 const cors = require('cors');
 
@@ -17,11 +18,11 @@ app.get("/", (req, res) => {
     res.send("Welcome to the Task Manager API!");
 });
 //auth routes
-app.use('/api/v1/auth', require('./routes/authRoutes'));
+app.use('/api/v1/auth', require('./src/routes/authRoutes'));
 //task routes
-app.use('/api/v1/tasks', require('./routes/taskRoutes'));
+app.use('/api/v1/tasks', require('./src/routes/taskRoutes'));
 //admin routes
-app.use('/api/v1/admin', require('./routes/adminRoutes'));
+app.use('/api/v1/admin', require('./src/routes/adminRoutes'));
 
 
 
