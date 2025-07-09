@@ -3,7 +3,7 @@ const taskService = require('../services/task.service');
 
 // Create a new task
 exports.createTask = async (req, res) => {
-    const { title, description, dueDate } = req.body;
+    const { title, description, dueDate, status } = req.body;
     if (!title || !dueDate) {
         return res.status(400).json({ message: "Title and due date are required." });
     }
@@ -12,6 +12,7 @@ exports.createTask = async (req, res) => {
             title,
             description,
             dueDate,
+            status: status || 'pending',
             owner: req.user.userId
         });
         res.status(201).json({ message: "Task created successfully.", task });
@@ -24,24 +25,13 @@ exports.createTask = async (req, res) => {
 
 exports.getTasks = async (req, res) => {
     const userId = req.user.userId;
-    // Extract query parameters
-    const { search, completed, page = 1, limit = 10 } = req.query;
-    const query = { owner: userId };
-    // Build the query based on search and completed parameters
-    if (completed !== undefined) {
-        query.completed = completed === 'true';
-    }
-    if (search) {
-        query.$or = [
-            { title: new RegExp(search, 'i') },
-            { description: new RegExp(search, 'i') }
-        ];
-    }
+    const { search, status, page = 1, limit = 10 } = req.query;
+
     try {
         const { tasks, total } = await taskService.getTasks({
             userId,
             search,
-            completed,
+            status,
             page: parseInt(page),
             limit: parseInt(limit)
         });
