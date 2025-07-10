@@ -5,11 +5,11 @@ exports.createTask = async (data) => {
     return await Task.create(data);
 }
 
-exports.getTasks = async ({ userId, search, completed, page, limit }) => {
+exports.getTasks = async ({ userId, search, status, page, limit }) => {
     const query = { owner: userId };
 
-    if (completed !== undefined) {
-        query.completed = completed === 'true';
+    if (status !== undefined) {
+        query.status = status;
     }
 
 
