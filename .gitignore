@@ -1,3 +1,5 @@
 /node_modules
 /.env
 /sample.js
+task.test.js
+test/model
