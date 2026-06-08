@@ -1,8 +1,8 @@
-# 📝 Taskify Backend API
+# Taskify Backend API
 
 Taskify is a simple RESTful Task Management API built with **Node.js**, **Express**, and **MongoDB**. It allows users to create, update, delete, and manage their tasks with automatic status updates based on due dates and activity.
 
-## 🚀 Features
+## Features
 
 - User registration and login (JWT authentication)
 - Role-based access control
@@ -13,7 +13,7 @@ Taskify is a simple RESTful Task Management API built with **Node.js**, **Expres
 - Follows REST API best practices
 - Admin features for managing users and roles
 
-## 👤 Roles
+## Roles
 
 - **User**: Can create, view, update, and delete their own tasks.
 - **Admin**:
@@ -21,7 +21,7 @@ Taskify is a simple RESTful Task Management API built with **Node.js**, **Expres
   - Can update user roles.
   - Can delete any user or task.
 
-## ⚙️ Tech Stack
+## Tech Stack
 
 - Node.js
 - Express
@@ -31,7 +31,7 @@ Taskify is a simple RESTful Task Management API built with **Node.js**, **Expres
 - Postman for API testing
 - Git for version control
 
-## 📁 Folder Structure
+## Folder Structure
 
 ```
 src/
@@ -44,7 +44,7 @@ src/
 └── app.js
 ```
 
-## 🔐 Authentication
+## Authentication
 
 - Uses JWT for securing endpoints.
 - Passwords are hashed using bcrypt.
@@ -54,7 +54,7 @@ src/
 Authorization: Bearer <your_token_here>
 ```
 
-## 📌 Task Status Logic
+## Task Status Logic
 
 - `status` auto-updates based on:
   - If task is marked `completed`
@@ -64,7 +64,7 @@ Authorization: Bearer <your_token_here>
 
 This is handled inside the task schema’s `pre("save")` hook.
 
-## 📦 API Endpoints
+## API Endpoints
 
 | Method | Endpoint              | Description                      | Access        |
 | ------ | --------------------- | -------------------------------- | ------------- |
@@ -77,7 +77,7 @@ This is handled inside the task schema’s `pre("save")` hook.
 | PATCH  | `/api/tasks/:id`      | Update a task                    | Authenticated |
 | DELETE | `/api/tasks/:id`      | Delete a task                    | Authenticated |
 
-## 🧪 Testing
+## Testing
 
 Use [Postman](https://www.postman.com/) or any API client to test endpoints.
 
@@ -94,7 +94,7 @@ To test locally:
    npm run dev
    ```
 
-## 📄 .env Example
+## .env Example
 
 ```env
 PORT=5000
@@ -102,13 +102,13 @@ MONGODB_URI=mongodb://localhost:27017/taskify
 JWT_SECRET=your_jwt_secret_key
 ```
 
-## ✅ Todo
+## Todo
 
 - [ ] Add unit, integration, and E2E tests
 - [ ] Add CI/CD with GitHub Actions
 - [ ] Add Swagger API documentation
 - [ ] Deploy to Render/Heroku/Netlify (backend)
 
-## 👨‍💻 Author
+## Author
 
-Built with ❤️ by [Joy Agbo]
+Built with ❤️ by Joy Agbo
