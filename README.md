@@ -13,6 +13,10 @@ Taskify is a simple RESTful Task Management API built with **Node.js**, **Expres
 - Follows REST API best practices
 - Admin features for managing users and roles
 
+
+## Live API
+Base URL: `https://taskify-backend-984v.onrender.com`
+
 ## Roles
 
 - **User**: Can create, view, update, and delete their own tasks.
