@@ -39,13 +39,17 @@ exports.loginUser = async ({ email, password }) => {
     // Check if user exists
     const user = await User.findOne({ email });
     if (!user) {
-        throw new authError("User not found", 401);
+        if (!user || !isPasswordValid) {
+            throw new authError("Invalid email or password", 401);
+        }
     }
 
     //check if password is valid
     const isPasswordValid = await bcrypt.compare(password, user.password)
     if (!isPasswordValid) {
-        throw new authError("invalid password", 401)
+        if (!user || !isPasswordValid) {
+            throw new authError("Invalid email or password", 401);
+        }
     }
 
 
