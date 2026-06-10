@@ -2,9 +2,13 @@
   "name": "task-manager-api",
   "version": "1.0.0",
   "description": "A RESTful API for managing personal and team tasks with user authentication and role-based access control. Built using Node.js, Express, and MongoDB.",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "dotenv -e .env.test -- jest --testEnvironment node --forceExit --detectOpenHandles"
+  },
+  "jest": {
+    "testMatch": ["**/__tests__/**/*.test.js"],
+     "testTimeout": 15000
   },
   "author": "Joy Agbo",
   "license": "ISC",
@@ -16,8 +20,12 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^7.2.0",
     "mongoose": "^8.16.0",
-    "nodemon": "^3.1.14",
     "swagger-jsdoc": "^6.3.0",
     "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "jest": "^30.4.2",
+    "supertest": "^7.2.2",
+    "nodemon": "^3.1.14"
   }
 }

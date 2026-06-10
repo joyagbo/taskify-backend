@@ -3,3 +3,4 @@
 /sample.js
 task.test.js
 test/model
+.env.test
